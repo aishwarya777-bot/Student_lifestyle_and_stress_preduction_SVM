@@ -6,8 +6,8 @@ from flask import Flask, request, render_template_string
 app = Flask(__name__)
 
 # --- Model Loading Configuration ---
-# Update this filename based on which model you are executing ('logistic_pkl.pkl' or 'SVM_model.pkl')
-MODEL_PATH = "logistic_pkl.pkl" 
+# Configured directly for your SVM model file
+MODEL_PATH = "SVM_model.pkl" 
 
 try:
     with open(MODEL_PATH, "rb") as f:
@@ -16,21 +16,20 @@ except Exception as e:
     model = None
     print(f"Model load alert: {e}")
 
-# Exact explicit feature alignment match required by the dataset schema
+# The 8 exact features your SVM model expects in correct order
 FEATURE_KEYS = [
-    'age', 'anaemia', 'creatinine_phosphokinase', 'diabetes', 
-    'ejection_fraction', 'high_blood_pressure', 'platelets', 
-    'serum_creatinine', 'serum_sodium', 'sex', 'smoking', 'time'
+    'Student_Type', 'Sleep_Hours', 'Study_Hours', 'Social_Media_Hours', 
+    'Attendance', 'Exam_Pressure', 'Family_Support', 'Month'
 ]
 
-# --- Premium Modern UI Template ---
+# --- Premium Glassmorphism UI Template ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinical Analytics Engine</title>
+    <title>Predictive Analytics Workspace</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -250,7 +249,7 @@ HTML_TEMPLATE = """
 
 <div class="dashboard">
     <header>
-        <h1>Clinical Predictive Workspace</h1>
+        <h1>SVM Analysis Workspace</h1>
         <p>Interactive diagnostics analytics framework engine</p>
     </header>
 
@@ -258,99 +257,67 @@ HTML_TEMPLATE = """
         <div class="form-grid">
             
             <div class="field-card">
-                <div class="label-wrapper">
-                    <label>Age Profile</label>
-                    <span class="live-value" id="val_age">55</span>
-                </div>
-                <input type="range" name="age" min="1" max="110" value="{{ form_values.get('age', 55) }}" oninput="document.getElementById('val_age').innerText=this.value">
-            </div>
-
-            <div class="field-card">
-                <div class="label-wrapper"><label>Anaemia Condition</label></div>
-                <select name="anaemia">
-                    <option value="0" {% if form_values.get('anaemia') == '0' %}selected{% endif %}>Negative / Normal Baseline</option>
-                    <option value="1" {% if form_values.get('anaemia') == '1' %}selected{% endif %}>Positive Case Detected</option>
+                <div class="label-wrapper"><label>Profile Category</label></div>
+                <select name="Student_Type">
+                    <option value="0" {% if form_values.get('Student_Type') == '0' %}selected{% endif %}>Standard Baseline Profile</option>
+                    <option value="1" {% if form_values.get('Student_Type') == '1' %}selected{% endif %}>Alternative Profile</option>
                 </select>
             </div>
 
             <div class="field-card">
                 <div class="label-wrapper">
-                    <label>Creatinine Phosphokinase (mcg/L)</label>
-                    <span class="live-value" id="val_cpk">250</span>
+                    <label>Sleep Duration (Hours)</label>
+                    <span class="live-value" id="val_Sleep_Hours">7</span>
                 </div>
-                <input type="range" name="creatinine_phosphokinase" min="10" max="8000" value="{{ form_values.get('creatinine_phosphokinase', 250) }}" oninput="document.getElementById('val_cpk').innerText=this.value">
+                <input type="range" name="Sleep_Hours" min="1" max="24" value="{{ form_values.get('Sleep_Hours', 7) }}" oninput="document.getElementById('val_Sleep_Hours').innerText=this.value">
             </div>
 
             <div class="field-card">
-                <div class="label-wrapper"><label>Diabetes History</label></div>
-                <select name="diabetes">
-                    <option value="0" {% if form_values.get('diabetes') == '0' %}selected{% endif %}>Non-Diabetic</option>
-                    <option value="1" {% if form_values.get('diabetes') == '1' %}selected{% endif %}>Diabetic Clinical Diagnosis</option>
+                <div class="label-wrapper">
+                    <label>Study Allocation (Hours)</label>
+                    <span class="live-value" id="val_Study_Hours">4</span>
+                </div>
+                <input type="range" name="Study_Hours" min="0" max="24" value="{{ form_values.get('Study_Hours', 4) }}" oninput="document.getElementById('val_Study_Hours').innerText=this.value">
+            </div>
+
+            <div class="field-card">
+                <div class="label-wrapper">
+                    <label>Screen / Social Engagement (Hours)</label>
+                    <span class="live-value" id="val_Social_Media_Hours">2</span>
+                </div>
+                <input type="range" name="Social_Media_Hours" min="0" max="24" value="{{ form_values.get('Social_Media_Hours', 2) }}" oninput="document.getElementById('val_Social_Media_Hours').innerText=this.value">
+            </div>
+
+            <div class="field-card">
+                <div class="label-wrapper">
+                    <label>Attendance Level (%)</label>
+                    <span class="live-value" id="val_Attendance">85</span>
+                </div>
+                <input type="range" name="Attendance" min="0" max="100" value="{{ form_values.get('Attendance', 85) }}" oninput="document.getElementById('val_Attendance').innerText=this.value">
+            </div>
+
+            <div class="field-card">
+                <div class="label-wrapper">
+                    <label>Stress & Pressure Index</label>
+                    <span class="live-value" id="val_Exam_Pressure">5</span>
+                </div>
+                <input type="range" name="Exam_Pressure" min="1" max="10" value="{{ form_values.get('Exam_Pressure', 5) }}" oninput="document.getElementById('val_Exam_Pressure').innerText=this.value">
+            </div>
+
+            <div class="field-card">
+                <div class="label-wrapper"><label>Support Environment Baseline</label></div>
+                <select name="Family_Support">
+                    <option value="0" {% if form_values.get('Family_Support') == '0' %}selected{% endif %}>Standard Baseline Environment</option>
+                    <option value="1" {% if form_values.get('Family_Support') == '1' %}selected{% endif %}>High Support Environment</option>
                 </select>
             </div>
 
             <div class="field-card">
                 <div class="label-wrapper">
-                    <label>Ejection Fraction (%)</label>
-                    <span class="live-value" id="val_ef">40</span>
+                    <label>Timeline Interval (Month)</label>
+                    <span class="live-value" id="val_Month">6</span>
                 </div>
-                <input type="range" name="ejection_fraction" min="10" max="80" value="{{ form_values.get('ejection_fraction', 40) }}" oninput="document.getElementById('val_ef').innerText=this.value">
-            </div>
-
-            <div class="field-card">
-                <div class="label-wrapper"><label>Hypertension Status</label></div>
-                <select name="high_blood_pressure">
-                    <option value="0" {% if form_values.get('high_blood_pressure') == '0' %}selected{% endif %}>Normal / Controlled Blood Pressure</option>
-                    <option value="1" {% if form_values.get('high_blood_pressure') == '1' %}selected{% endif %}>Hypertensive State Confirmed</option>
-                </select>
-            </div>
-
-            <div class="field-card">
-                <div class="label-wrapper">
-                    <label>Platelets Count (kiloplatelets/mL)</label>
-                    <span class="live-value" id="val_plat">250000</span>
-                </div>
-                <input type="range" name="platelets" min="25000" max="850000" step="5000" value="{{ form_values.get('platelets', 250000) }}" oninput="document.getElementById('val_plat').innerText=this.value">
-            </div>
-
-            <div class="field-card">
-                <div class="label-wrapper">
-                    <label>Serum Creatinine (mg/dL)</label>
-                    <span class="live-value" id="val_creat">1.2</span>
-                </div>
-                <input type="range" name="serum_creatinine" min="0.1" max="10.0" step="0.1" value="{{ form_values.get('serum_creatinine', 1.2) }}" oninput="document.getElementById('val_creat').innerText=this.value">
-            </div>
-
-            <div class="field-card">
-                <div class="label-wrapper">
-                    <label>Serum Sodium (mEq/L)</label>
-                    <span class="live-value" id="val_sod">135</span>
-                </div>
-                <input type="range" name="serum_sodium" min="100" max="150" value="{{ form_values.get('serum_sodium', 135) }}" oninput="document.getElementById('val_sod').innerText=this.value">
-            </div>
-
-            <div class="field-card">
-                <div class="label-wrapper"><label>Biological Sex Classification</label></div>
-                <select name="sex">
-                    <option value="0" {% if form_values.get('sex') == '0' %}selected{% endif %}>Female</option>
-                    <option value="1" {% if form_values.get('sex') == '1' %}selected{% endif %}>Male</option>
-                </select>
-            </div>
-
-            <div class="field-card">
-                <div class="label-wrapper"><label>Tobacco Dependency Profile</label></div>
-                <select name="smoking">
-                    <option value="0" {% if form_values.get('smoking') == '0' %}selected{% endif %}>Identified Non-Smoker</option>
-                    <option value="1" {% if form_values.get('smoking') == '1' %}selected{% endif %}>Identified Active Smoker</option>
-                </select>
-            </div>
-
-            <div class="field-card">
-                <div class="label-wrapper">
-                    <label>Clinical Observation Period (Days)</label>
-                    <span class="live-value" id="val_time">100</span>
-                </div>
-                <input type="range" name="time" min="1" max="300" value="{{ form_values.get('time', 100) }}" oninput="document.getElementById('val_time').innerText=this.value">
+                <input type="range" name="Month" min="1" max="12" value="{{ form_values.get('Month', 6) }}" oninput="document.getElementById('val_Month').innerText=this.value">
             </div>
 
             <div class="action-row">
@@ -360,7 +327,7 @@ HTML_TEMPLATE = """
     </form>
 
     {% if prediction_label %}
-        <div class="result-panel {% if 'HIGH RISK' in prediction_label %}status-positive{% else %}status-negative{% endif %}">
+        <div class="result-panel {% if 'HIGH RISK' in prediction_label or 'ALERT' in prediction_label %}status-positive{% else %}status-negative{% endif %}">
             <div class="result-title">Inference Engine Diagnostic Conclusion</div>
             <div class="result-value">{{ prediction_label }}</div>
         </div>
@@ -368,11 +335,9 @@ HTML_TEMPLATE = """
 </div>
 
 <script>
-    // System script synchronization logic ensuring initial sliders render their values dynamically
     window.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('input[type="range"]').forEach(input => {
-            const displayId = 'val_' + input.name.replace('creatinine_phosphokinase', 'cpk').replace('ejection_fraction', 'ef').replace('platelets', 'plat').replace('serum_creatinine', 'creat').replace('serum_sodium', 'sod');
-            const element = document.getElementById(displayId);
+            const element = document.getElementById('val_' + input.name);
             if(element) element.innerText = input.value;
         });
     });
@@ -389,7 +354,7 @@ def index():
     if request.method == "POST":
         form_values = request.form.to_dict()
         if model is None:
-            prediction_label = "Model Error: System core execution binary file missing or unreadable."
+            prediction_label = f"Model Error: System core execution binary file '{MODEL_PATH}' missing or unreadable."
             return render_template_string(HTML_TEMPLATE, prediction_label=prediction_label, form_values=form_values)
         
         try:
@@ -403,9 +368,9 @@ def index():
             
             # Map specific numeric outputs directly into readable categorical alerts
             if int(raw_output) == 1:
-                prediction_label = "⚠️ HIGH RISK ALERT STATUS CLASSIFICATION"
+                prediction_label = "⚠️ ALERT CLASSIFICATION DETECTED (Value: 1)"
             else:
-                prediction_label = "✅ LOW RISK BASELINE STANDARD STATUS"
+                prediction_label = "✅ NORMAL BASELINE STANDARD CONFIRMED (Value: 0)"
                 
         except Exception as e:
             prediction_label = f"Analysis Interrupted: {str(e)}"
